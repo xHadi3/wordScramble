@@ -16,6 +16,8 @@ struct ContentView: View {
     @State private var errorTitle = ""
     @State private var errorMessage = ""
     @State private var showingError = false
+    @State private var score = 0
+    @State private var totalLatters = 0
     
     var body: some View {
         NavigationStack{
@@ -27,17 +29,22 @@ struct ContentView: View {
                 
                 Section{
                     ForEach(usedWords , id: \.self){ word in
+                        
                         HStack{
                             Image(systemName: "\(word.count).circle")
                             Text(word)
                         }
                     }
                 }
+                
+                Section("Score"){
+                    Text("Your Got \(score) words using \(totalLatters) letters ")
+                }
             }
             .navigationTitle(rootWord)
             .toolbar{
                 Button("rest"){
-                    startGame()
+                    reset()
                 }
             }
             .onSubmit(addNewWord)
@@ -85,7 +92,8 @@ struct ContentView: View {
         withAnimation{
             usedWords.insert(answer, at: 0)
         }
-        
+        totalLatters += answer.count
+        score += 1
         newWord = ""
     }
     
@@ -145,6 +153,17 @@ struct ContentView: View {
         errorTitle = title
         errorMessage = message
         showingError = true
+    }
+    
+    func updateTotalLatters(word: String) -> Int{
+        totalLatters = word.count
+        return totalLatters
+    }
+    func reset(){
+        score = 0
+        totalLatters = 0
+        usedWords.removeAll()
+        startGame()
     }
     
 }
